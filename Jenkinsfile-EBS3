@@ -34,11 +34,11 @@ pipeline {
 				sh "mvn clean install -Dmaven.test.skip=true"
 			}
 
-			post {
-				always {
-					junit '**/target/surefire-reports/TEST-*.xml'
-				}
-			}
+			//post {
+				//always {
+					//junit '**/target/surefire-reports/TEST-*.xml'
+				//}
+			//}
 		}
 
 		// stage('Quality Scan'){
