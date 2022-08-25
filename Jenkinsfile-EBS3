@@ -3,8 +3,8 @@ pipeline {
 
 	environment {
 
-			AWS_ACCESS_KEY_ID     = credentials('Access-key')
-			AWS_SECRET_ACCESS_KEY = credentials('Secret-access')
+			AWS_ACCESS_KEY_ID     = credentials('aws-secret-key-id')
+			AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
 
 			AWS_S3_BUCKET         = "hcbucketnew"
 			AWS_REGION            = "us-east-1"
@@ -13,17 +13,6 @@ pipeline {
 
 	stages {
 
-		stage('Package') {
-			steps {
-				sh "mvn package"
-			}
-
-			post {
-				success {
-					archiveArtifacts artifacts: '**/target/**.war', followSymlinks: false
-				}
-			}
-		}
 		
 		stage('Validate') {
 			steps {
