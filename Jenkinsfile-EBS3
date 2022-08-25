@@ -6,9 +6,9 @@ pipeline {
 			AWS_ACCESS_KEY_ID     = credentials('Access-key')
 			AWS_SECRET_ACCESS_KEY = credentials('Secret-access')
 
-			AWS_S3_BUCKET         = "hcbucketnew.jar"
+			AWS_S3_BUCKET         = "hcbucketnew"
 			AWS_REGION            = "us-east-1"
-			ARTIFACT_NAME         = "goldenwaste.war"
+			ARTIFACT_NAME         = "goldenwaste.jar"
 	}
 
 	stages {
