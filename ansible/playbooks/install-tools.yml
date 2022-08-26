@@ -1,6 +1,7 @@
 ---
   - name: "Install Jenkins SonarQube Nexus in localhost"
     hosts: localhost
+    gather_facts: false
     connection: local
     tasks:
       - name: Install apache2
