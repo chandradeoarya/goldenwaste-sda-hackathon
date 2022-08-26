@@ -151,8 +151,7 @@ Resources:
     Properties:
       GroupName: MasterSecurityGroup
       GroupDescription: >-
-        Allow ports 80 for HTTP, 22 for SSH, 8080 for Jenkins and 9000 for
-        SonarQube
+        Allow ports 80 for HTTP, 22 for SSH, 8080 for Jenkins and 9000 for SonarQube
       VpcId: !Ref GoldenWasteVPC
       SecurityGroupIngress:
         - CidrIp: !Ref HTTPLocation
