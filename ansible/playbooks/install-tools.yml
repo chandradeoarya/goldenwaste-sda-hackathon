@@ -1,0 +1,58 @@
+---
+  - name: "Install Jenkins SonarQube Nexus in localhost"
+    hosts: localhost
+    connection: local
+    tasks:
+      - name: install apache2
+        apt:
+          name: apache2
+          update_cache: yes
+          state: latest
+
+      - name: install JDK
+        apt:
+          name: default-jdk
+          update_cache: yes
+          state: latest
+
+      - name: Add jenkins apt key
+        shell: wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+
+      - name: add debian package to sources list 
+        shell: 'sh -c "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"'
+
+      - name: install jenkins
+        apt:
+          name: jenkins
+          update_cache: yes
+          state: latest
+
+      - name: download nexus
+        shell: wget https://download.sonatype.com/nexus/oss/nexus-latest-bundle.tar.gz
+
+      - name: extract nexus nexus-latest-bundle.tar.gz file
+        shell: tar -xvzf nexus-latest-bundle.tar.gz
+
+      - name: download sonarqube community version
+        shell: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip
+
+      - name: install unzip
+        apt:
+          name: unzip
+          update_cache: yes
+          state: latest
+
+      - name: unzip sonarqube
+        shell: unzip -o sonarqube-8.9.9.56886.zip
+
+      - name: remove sonarqube-*.zip
+        shell: rm sonarqube-8.9.9.56886.zip
+
+      - name: setup sonatype-work permissions
+        shell: chown -R ubuntu:ubuntu sonatype-work
+
+      - name: setup sonarqube permissions
+        shell: chown -R ubuntu:ubuntu sonarqube*
+
+      - name: setup nexus permissions
+        shell: chown -R ubuntu:ubuntu nexus*

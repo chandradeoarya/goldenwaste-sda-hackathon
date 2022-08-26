@@ -1,0 +1,10 @@
+---
+  - import_playbook: install-java-maven.yml
+  - import_playbook: install-tools.yml
+  - import_playbook: install-mysql.yml
+  - hosts: localhost
+    connection: local
+    become: yes
+    tasks:
+      - name: Run SonarQube
+        shell: ./home/ubuntu/GoldenWaste/running-sonarqube.sh
