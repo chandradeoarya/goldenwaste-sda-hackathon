@@ -8,19 +8,19 @@
         - mysql-client
 
     tasks:
-      - name: Install python, pip etc
-        shell: apt-get -y install "{{ item }}"
-        with_items:
-          - python3-pip
-          - python3-dev
-          - default-libmysqlclient-dev
-          - build-essential
-
-      - name: Install MySQL server
-        shell: apt-get -y install mysql-server
-
-      - name: Install MySQL client
-        shell: apt-get -y install mysql-client
+      - name: Install python, pip, MySQL etc.
+        apt:
+          name: "{{ packages }}"
+          state: present
+          update_cache: yes
+        vars:
+          packages:
+            - python3-pip
+            - python3-dev
+            - default-libmysqlclient-dev
+            - build-essential
+            - mysql-server
+            - mysql-client
 
       - name: pip install mysqlclient
         shell: pip install mysqlclient
