@@ -5,9 +5,6 @@
       - name: Install Maven
         become: yes
         apt:
-          name: "{{ packages }}"
+          name: maven
           state: present
           update_cache: yes
-        vars:
-          packages:
-            - maven
