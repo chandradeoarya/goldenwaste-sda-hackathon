@@ -49,10 +49,10 @@
         shell: rm /home/ubuntu/GoldenWaste/tmp/sonarqube-8.9.9.56886.zip /home/ubuntu/GoldenWaste/tmp/nexus-latest-bundle.tar.gz
 
       - name: Setup sonatype-work permissions
-        shell: chown -R ubuntu:ubuntu sonatype-work
+        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/nexus/sonatype-work
 
       - name: Setup sonarqube permissions
-        shell: chown -R ubuntu:ubuntu sonarqube*
+        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/sonarqube/sonarqube*
 
       - name: Setup nexus permissions
-        shell: chown -R ubuntu:ubuntu nexus*
+        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/nexus/nexus*
