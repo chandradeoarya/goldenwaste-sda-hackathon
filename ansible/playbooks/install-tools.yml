@@ -1,5 +1,5 @@
 ---
-  - name: "Install Jenkins SonarQube Nexus in localhost"
+  - name: "Install Jenkins SonarQube Nexus AWSCLI in localhost"
     hosts: localhost
     gather_facts: false
     connection: local
@@ -60,3 +60,9 @@
 
       - name: Change the permissions of private SSH key
         shell: chmod 400 /home/ubuntu/GoldenWaste/.ssh/temp.pem
+
+      - name: Install AWSCLI
+        apt:
+          name: awscli
+          update_cache: yes
+          state: latest
