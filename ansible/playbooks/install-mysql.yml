@@ -1,5 +1,6 @@
 ---
   - hosts: GoldenWasteDB
+    gather_facts: false
     become: yes
     vars:
       new_mysql_root_password: DevOps@2022
