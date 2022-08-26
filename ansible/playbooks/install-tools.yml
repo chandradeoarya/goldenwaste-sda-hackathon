@@ -56,3 +56,6 @@
 
       - name: Setup nexus permissions
         shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/nexus/nexus*
+
+      - name: Change the permissions of private SSH key
+        shell: chmod 400 /home/ubuntu/GoldenWaste/.ssh/temp.pem
