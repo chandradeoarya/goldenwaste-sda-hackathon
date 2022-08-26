@@ -38,7 +38,7 @@
           host: "{{ item }}"
           password: "{{ new_mysql_root_password }}"
         with_items:
-          - "{{ ansible_hostname }}"
+          - "{{ ansible_host }}"
           - 127.0.0.1
           - ::1
           - localhost

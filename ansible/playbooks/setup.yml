@@ -7,4 +7,4 @@
     become: yes
     tasks:
       - name: Run SonarQube
-        shell: /home/ubuntu/GoldenWaste/ansible/running-sonarqube.sh
+        shell: sudo ./home/ubuntu/GoldenWaste/ansible/running-sonarqube.sh
