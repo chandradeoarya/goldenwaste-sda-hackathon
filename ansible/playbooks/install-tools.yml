@@ -3,56 +3,56 @@
     hosts: localhost
     connection: local
     tasks:
-      - name: install apache2
+      - name: Install apache2
         apt:
           name: apache2
           update_cache: yes
           state: latest
 
-      - name: install JDK
+      - name: Install JDK
         apt:
           name: default-jdk
           update_cache: yes
           state: latest
 
-      - name: Add jenkins apt key
+      - name: Add Jenkins apt key
         shell: wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
 
-      - name: add debian package to sources list 
+      - name: Add debian package to sources list 
         shell: 'sh -c "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"'
 
-      - name: install jenkins
+      - name: Install jenkins
         apt:
           name: jenkins
           update_cache: yes
           state: latest
 
-      - name: download nexus
-        shell: wget https://download.sonatype.com/nexus/oss/nexus-latest-bundle.tar.gz
+      - name: Download Nexus
+        shell: wget https://download.sonatype.com/nexus/oss/nexus-latest-bundle.tar.gz -P /home/ubuntu/GoldenWaste/tmp
 
-      - name: extract nexus nexus-latest-bundle.tar.gz file
-        shell: tar -xvzf nexus-latest-bundle.tar.gz
+      - name: Extract Nexus nexus-latest-bundle.tar.gz file
+        shell: tar -xvzf /home/ubuntu/GoldenWaste/tmp/nexus-latest-bundle.tar.gz -C /home/ubuntu/GoldenWaste/nexus
 
-      - name: download sonarqube community version
-        shell: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip
+      - name: Download SonarQube community version
+        shell: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip -P /home/ubuntu/GoldenWaste/tmp
 
-      - name: install unzip
+      - name: Install unzip
         apt:
           name: unzip
           update_cache: yes
           state: latest
 
-      - name: unzip sonarqube
-        shell: unzip -o sonarqube-8.9.9.56886.zip
+      - name: Unzip SonarQube
+        shell: unzip -o /home/ubuntu/GoldenWaste/tmp/sonarqube-8.9.9.56886.zip -d /home/ubuntu/GoldenWaste/sonarqube
 
-      - name: remove sonarqube-*.zip
-        shell: rm sonarqube-8.9.9.56886.zip
+      - name: Remove sonarqube-*.zip and nexus-latest-bundle.tar.gz
+        shell: rm /home/ubuntu/GoldenWaste/tmp/sonarqube-8.9.9.56886.zip /home/ubuntu/GoldenWaste/tmp/nexus-latest-bundle.tar.gz
 
-      - name: setup sonatype-work permissions
+      - name: Setup sonatype-work permissions
         shell: chown -R ubuntu:ubuntu sonatype-work
 
-      - name: setup sonarqube permissions
+      - name: Setup sonarqube permissions
         shell: chown -R ubuntu:ubuntu sonarqube*
 
-      - name: setup nexus permissions
+      - name: Setup nexus permissions
         shell: chown -R ubuntu:ubuntu nexus*

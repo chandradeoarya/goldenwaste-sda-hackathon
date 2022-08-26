@@ -8,7 +8,7 @@
         - mysql-client
 
     tasks:
-      - name: install python, pip etc
+      - name: Install python, pip etc
         shell: apt-get -y install "{{ item }}"
         with_items:
           - python3-pip
@@ -28,10 +28,10 @@
       - name: Start the MySQL service
         action: service name=mysql state=started
 
-      - name: copy .my.cnf file with root password credentials
-        template: src=/home/ubuntu/GoldenWaste/my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
+      - name: Copy .my.cnf file with root password credentials
+        template: src=/home/ubuntu/GoldenWaste/ansible/my.cnf.j2 dest=/root/.my.cnf owner=root mode=0600
 
-      - name: update mysql root password for all root accounts
+      - name: Update MySQL root password for all root accounts
         mysql_user:
           name: root
           host: "{{ item }}"
@@ -42,10 +42,10 @@
           - ::1
           - localhost
 
-      - name: delete anonymous MySQL server user for localhost
+      - name: Delete anonymous MySQL server user for localhost
         action: mysql_user user="" state="absent"
 
-      - name: remove the MySQL test database
+      - name: Remove the MySQL test database
         action: mysql_db db=test state=absent
 
       - name: Remove   /root/.my.cnf
