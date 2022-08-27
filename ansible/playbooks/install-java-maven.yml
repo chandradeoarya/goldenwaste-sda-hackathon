@@ -8,3 +8,20 @@
           name: maven
           state: present
           update_cache: yes
+
+      - name: Install Java
+        become: yes
+        apt:
+          name: openjdk-11-jdk
+          state: present
+          update_cache: yes
+
+      - name: Install tomcat
+        become: yes
+        apt:
+          name: "{{ item }}"
+          state: present
+          update_cache: yes
+        with_items:
+          - tomcat9
+          - tomcat9-admin
