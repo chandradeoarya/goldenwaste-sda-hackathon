@@ -56,6 +56,18 @@ pipeline {
             }
 		}
 
+		stage('Package') {
+            steps {                
+                sh "mvn package"
+            }
+
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/**.jar', followSymlinks: false                   
+                }
+            }
+        }
+
 		stage('Publish artefacts to S3 Bucket') {
             steps {
                 sh "aws configure set region $AWS_REGION"
