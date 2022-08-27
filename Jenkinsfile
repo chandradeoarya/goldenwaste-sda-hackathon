@@ -3,7 +3,7 @@ pipeline {
 
 	environment {
 
- 		 	ARTIFACT_NAME         = "ROOT.war"
+ 		 	ARTIFACT_NAME         = "ROOT.jar"
 
   			SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
   			SONAR_IP              = "100.25.23.137:9000"
@@ -57,7 +57,7 @@ pipeline {
 
             post {
                 success {
-                    archiveArtifacts artifacts: '**/target/**.war', followSymlinks: false                   
+                    archiveArtifacts artifacts: '**/target/**.jar', followSymlinks: false                   
                 }
             }
         }
