@@ -6,7 +6,7 @@ pipeline {
 		AWS_ACCESS_KEY_ID     = credentials('aws-secret-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
 
-		AWS_S3_BUCKET         = "artefact-bucket-repo"
+		AWS_S3_BUCKET         = "golden-waste"
         AWS_REGION            = "us-east-1"
 
 		ARTIFACT_NAME         = "ROOT.jar"
