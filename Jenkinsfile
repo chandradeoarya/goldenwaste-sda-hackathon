@@ -3,7 +3,7 @@ pipeline {
 
 	environment {
 
- 		 	ARTIFACT_NAME         = "ROOT.jar"
+ 		 	ARTIFACT_NAME         = "goldenWastedd-0.0.1-SNAPSHOT.jar"
 
   			SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
   			SONAR_IP              = "100.25.23.137:9000"
@@ -61,5 +61,11 @@ pipeline {
                 }
             }
         }
+
+		stage('Publish artefacts') {
+			steps {
+				sh "cp ./target/**.jar /home/ubuntu/GoldenWaste/ROOT/ROOT.jar
+			}
+		}
 	}
 }
