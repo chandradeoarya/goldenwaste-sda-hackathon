@@ -3,11 +3,17 @@ pipeline {
 
 	environment {
 
- 		 	ARTIFACT_NAME         = "goldenWastedd-0.0.1-SNAPSHOT.jar"
+		AWS_ACCESS_KEY_ID     = credentials('aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
 
-  			SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
-  			SONAR_IP              = "100.25.23.137:9000"
-  			SONAR_TOKEN           = "sqp_3ee5e38ffea3480013f8efe6778119a10f83dc8d"
+		AWS_S3_BUCKET         = "artefact-bucket-repo"
+        AWS_REGION            = "us-east-1"
+
+		ARTIFACT_NAME         = "ROOT.jar"
+
+		SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
+		SONAR_IP              = "100.25.23.137:9000"
+		SONAR_TOKEN           = "sqp_3ee5e38ffea3480013f8efe6778119a10f83dc8d"
 	}
 
 	stages {
@@ -50,22 +56,11 @@ pipeline {
             }
 		}
 
-		stage('Package') {
-            steps {                
-                sh "mvn package"
-            }
-
-            post {
-                success {
-                    archiveArtifacts artifacts: '**/target/**.jar', followSymlinks: false                   
-                }
+		stage('Publish artefacts to S3 Bucket') {
+            steps {
+                sh "aws configure set region $AWS_REGION"
+                sh "aws s3 cp ./target/**.jar s3://$AWS_S3_BUCKET/$ARTIFACT_NAME"
             }
         }
-
-		stage('Publish artefacts') {
-			steps {
-				sh "cp -f ./target/**.jar /home/ubuntu/ROOT.jar"
-			}
-		}
 	}
 }
