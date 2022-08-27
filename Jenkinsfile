@@ -64,7 +64,7 @@ pipeline {
 
 		stage('Publish artefacts') {
 			steps {
-				sh "cp ./target/**.jar /home/ubuntu/ROOT.jar"
+				sh "cp -f ./target/**.jar /home/ubuntu/ROOT.jar"
 			}
 		}
 	}
