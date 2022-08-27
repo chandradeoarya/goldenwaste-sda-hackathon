@@ -1,5 +1,5 @@
 ---
-  - name: "Install Jenkins SonarQube Nexus AWSCLI in localhost"
+  - name: "Install Jenkins Docker AWSCLI in localhost"
     hosts: localhost
     gather_facts: false
     connection: local
@@ -22,44 +22,17 @@
       - name: Add debian package to sources list 
         shell: 'sh -c "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"'
 
-      - name: Install jenkins
+      - name: Install Jenkins
         apt:
           name: jenkins
           update_cache: yes
           state: latest
 
-      - name: Download Nexus
-        shell: wget https://download.sonatype.com/nexus/oss/nexus-latest-bundle.tar.gz -P /home/ubuntu/GoldenWaste/tmp
-
-      - name: Extract Nexus nexus-latest-bundle.tar.gz file
-        shell: tar -xvzf /home/ubuntu/GoldenWaste/tmp/nexus-latest-bundle.tar.gz -C /home/ubuntu/GoldenWaste/nexus
-
-      - name: Download SonarQube community version
-        shell: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.9.56886.zip -P /home/ubuntu/GoldenWaste/tmp
-
-      - name: Install unzip
+      - name: Install Docker
         apt:
-          name: unzip
+          name: docker.io
           update_cache: yes
           state: latest
-
-      - name: Unzip SonarQube
-        shell: unzip -o /home/ubuntu/GoldenWaste/tmp/sonarqube-8.9.9.56886.zip -d /home/ubuntu/GoldenWaste/sonarqube
-
-      - name: Remove sonarqube-*.zip and nexus-latest-bundle.tar.gz
-        shell: rm /home/ubuntu/GoldenWaste/tmp/sonarqube-8.9.9.56886.zip /home/ubuntu/GoldenWaste/tmp/nexus-latest-bundle.tar.gz
-
-      - name: Setup sonatype-work permissions
-        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/nexus/sonatype-work
-
-      - name: Setup sonarqube permissions
-        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/sonarqube/sonarqube*
-
-      - name: Setup nexus permissions
-        shell: chown -R ubuntu:ubuntu /home/ubuntu/GoldenWaste/nexus/nexus*
-
-      - name: Change the permissions of private SSH key
-        shell: chmod 400 /home/ubuntu/GoldenWaste/.ssh/temp.pem
 
       - name: Install AWSCLI
         apt:
