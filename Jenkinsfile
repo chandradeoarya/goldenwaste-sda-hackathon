@@ -41,13 +41,25 @@ pipeline {
 		stage('Quality Scan'){
 
 			steps {
-		 		sh '''
-		 			mvn clean verify sonar:sonar \
-               -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-               -Dsonar.host.url=http://$SONAR_IP \
-               -Dsonar.login=$SONAR_TOKEN
-		  		'''
-		 	}
+                sh '''
+                mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+                    -Dsonar.host.url=http://$SONAR_IP \
+                    -Dsonar.login=$SONAR_TOKEN
+                '''
+            }
 		}
+
+		stage('Package') {
+            steps {                
+                sh "mvn package"
+            }
+
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/**.war', followSymlinks: false                   
+                }
+            }
+        }
 	}
 }
