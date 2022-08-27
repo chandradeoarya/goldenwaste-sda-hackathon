@@ -7,7 +7,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
 
 		AWS_S3_BUCKET         = "golden-waste"
-        AWS_REGION            = "us-east-1"
+        AWS_REGION            = "me-south-1"
 
 		ARTIFACT_NAME         = "ROOT.jar"
 
