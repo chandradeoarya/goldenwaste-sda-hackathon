@@ -64,7 +64,7 @@ pipeline {
 
 		stage('Publish artefacts') {
 			steps {
-				sh "sudo cp ./target/**.jar /home/ubuntu/GoldenWaste/ROOT/ROOT.jar"
+				sh "cp ./target/**.jar /home/ubuntu/ROOT.jar"
 			}
 		}
 	}
