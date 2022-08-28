@@ -11,7 +11,7 @@
           update_cache: yes
 
       - name: Set Linux environment variables
-        shell: export GOLDEN_DB_URL=10.0.139.112
+        shell: export GOLDEN_DB_URL=3.90.78.56
       
       - name: Set Linux environment variables
         shell: export GOLDEN_DB_PORT=3306
