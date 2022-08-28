@@ -37,7 +37,7 @@
           state: latest
 
       - name: Get the initial admin password
-        shell: cat /var/jenkins_home/secrets/initialAdminPassword
+        shell: cat /var/lib/jenkins/secrets/initialAdminPassword
         register: getresult
 
       - name: Add debian package to sources list 
