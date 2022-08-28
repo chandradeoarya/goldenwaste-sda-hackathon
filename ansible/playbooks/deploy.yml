@@ -3,11 +3,11 @@
     hosts: GoldenWasteWebApp
     vars:
     - jarName: ROOT.jar
-    - jarRemotePath: /home/ubuntu/GoldenWaste
+    - jarRemotePath: /home/ubuntu
 
     tasks:
     - name: Copy the file from master to GoldenWasteWebApp
-      copy: src="**/target/**.jar" dest="{{ jarRemotePath }}/{{ jarName }}"
+      copy: src="/var/lib/jenkins/jobs/goldenwaste-sda-hackathon/builds/*/archive/target/**.jar" dest="{{ jarRemotePath }}/{{ jarName }}"
       register: getresult
 
     - debug:

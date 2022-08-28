@@ -40,6 +40,10 @@
         shell: cat /var/lib/jenkins/secrets/initialAdminPassword
         register: getresult
 
+      - debug:
+          msg="{{ getresult.msg }}"
+        when: getresult.changed
+
       - name: Add debian package to sources list 
         shell: usermod -a -G root jenkins
 
