@@ -15,4 +15,4 @@
         shell: docker volume create --name sonarqube_extensions
 
       - name: Run SonarQube docker image
-        shell: docker run --rm -p 9000:9000 -v sonarqube_extensions:/opt/sonarqube/extensions sonarqube:community
+        shell: docker run --rm -p 9000:9000 -v sonarqube_extensions:/opt/sonarqube/extensions -d --name sonarqube sonarqube:community
