@@ -1,19 +1,16 @@
 ---
   - name: "Deploy jar file"
     hosts: GoldenWasteWebApp
-    vars:
-    - jarName: ROOT.jar
-    - jarRemotePath: /home/ubuntu
 
     tasks:
     - name: Copy the file from master to GoldenWasteWebApp
-      copy: src="/var/lib/jenkins/jobs/goldenwaste-sda-hackathon/builds/*/archive/target/**.jar" dest="{{ jarRemotePath }}/{{ jarName }}"
+      copy: src="/var/lib/jenkins/jobs/goldenwaste-sda-hackathon/builds/1/archive/target/goldenWastedd-0.0.1-SNAPSHOT.jar" dest="/home/ubuntu/ROOT.jar"
       register: getresult
 
     - debug: var=getresult.stdout_lines
       
     - name: Run JAR file
-      shell: java -jar {{ jarRemotePath }}/{{ jarName }}
+      shell: java -jar /home/ubuntu/ROOT.jar
       
     - name: Wait for WebApp to start
       wait_for: port=8080 timeout=60
