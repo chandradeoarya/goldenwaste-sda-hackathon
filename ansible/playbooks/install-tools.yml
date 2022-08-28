@@ -24,6 +24,25 @@
           update_cache: yes
           state: latest
 
+      - name: Add Jenkins apt key
+        shell: wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+
+      - name: Add debian package to sources list 
+        shell: 'sh -c "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"'
+
+      - name: Install Jenkins
+        apt:
+          name: jenkins
+          update_cache: yes
+          state: latest
+
+      - name: Get the initial admin password
+        shell: cat /var/jenkins_home/secrets/initialAdminPassword
+        register: getresult
+
+      - name: Add debian package to sources list 
+        shell: usermod -a -G root jenkins
+
       - name: Install Docker
         apt:
           name: docker.io
