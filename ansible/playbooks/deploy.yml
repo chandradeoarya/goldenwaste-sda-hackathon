@@ -1,0 +1,21 @@
+---
+  - name: "Deploy jar file"
+    hosts: GoldenWasteWebApp
+    vars:
+    - jarName: ROOT.jar
+    - jarRemotePath: /home/ubuntu/GoldenWaste
+
+    tasks:
+    - name: Copy the file from master to GoldenWasteWebApp
+      copy: src="**/target/**.jar" dest="{{ jarRemotePath }}/{{ jarName }}"
+      register: getresult
+
+    - debug:
+        msg="{{ getresult.msg }}"
+      when: getresult.changed
+      
+    - name: Run JAR file
+      shell: java -jar {{ jarRemotePath }}/{{ jarName }}
+      
+    - name: wait for WebApp to start
+      wait_for: port=8080 timeout=60
