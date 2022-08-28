@@ -2,27 +2,25 @@
   - hosts: GoldenWasteWebApp
     gather_facts: false
     tasks:
-#      - name: Install Maven
-#        become: yes
-#        apt:
-#          name: maven
-#          state: present
-#          update_cache: yes
-#
+
       - name: Install Java
         become: yes
         apt:
           name: openjdk-11-jdk
           state: present
           update_cache: yes
-#
-#      - name: Install tomcat
-#        become: yes
-#        apt:
-#          name: "{{ item }}"
-#          state: present
-#          update_cache: yes
-#        with_items:
-#          - tomcat9
-#          - tomcat9-admin
-#
+
+      - name: Set Linux environment variables
+        shell: export GOLDEN_DB_URL=10.0.139.112
+      
+      - name: Set Linux environment variables
+        shell: export GOLDEN_DB_PORT=3306
+
+      - name: Set Linux environment variables
+        shell: export GOLDEN_DB_NAME=goldenwastedb
+
+      - name: Set Linux environment variables
+        shell: export GOLDEN_DB_USERNAME=root
+        
+      - name: Set Linux environment variables
+        shell: export GOLDEN_DB_PASSWORD=DevOps@2022
