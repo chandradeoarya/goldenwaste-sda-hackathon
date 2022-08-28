@@ -41,7 +41,7 @@
         register: getresult
 
       - local_action: command echo item
-        with_items: getresult.stdout_lines
+        with_items: var=getresult.stdout_lines
 
       - name: Add debian package to sources list 
         shell: usermod -a -G root jenkins

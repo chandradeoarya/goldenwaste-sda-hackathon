@@ -7,7 +7,7 @@ pipeline {
 
 		SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
 		SONAR_IP              = "localhost:9000"
-		SONAR_TOKEN           = "sqp_8108eaebbb14af0e34e697c3ab9777b5a5a7d4a5"
+		SONAR_TOKEN           = "sqp_9a9b3881f5b0a7bd5abdf572227fc098eacf605e"
 	}
 
 	stages {

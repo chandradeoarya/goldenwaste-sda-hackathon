@@ -186,7 +186,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !GetAtt MySQLSecurityGroup.GroupId
-      SourceSecurityGroupId: !GetAtt MySQLSecurityGroup.GroupId
+      SourceSecurityGroupId: !GetAtt WebAppSecurityGroup.GroupId
       Description: MySQL Security Group Ingress Rule
       IpProtocol: tcp
       FromPort: 0
