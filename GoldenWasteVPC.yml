@@ -134,7 +134,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupName: WebAppSecurityGroup
-      GroupDescription: 'Allow ports 80 for HTTP, 22 for SSH'
+      GroupDescription: 'Allow ports 80 for HTTP,8080 for java app and 22 for SSH'
       VpcId: !Ref GoldenWasteVPC
       SecurityGroupIngress:
         - CidrIp: !Ref HTTPLocation
@@ -142,6 +142,11 @@ Resources:
           FromPort: 80
           ToPort: 80
           Description: HTTP
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          Description: Java
         - CidrIp: !Ref SSHLocation
           IpProtocol: tcp
           FromPort: 22
