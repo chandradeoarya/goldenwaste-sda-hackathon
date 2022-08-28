@@ -12,8 +12,8 @@ pipeline {
 		ARTIFACT_NAME         = "ROOT.jar"
 
 		SONAR_PROJECT_KEY     = "goldenwaste-sda-hackathon"
-		SONAR_IP              = "3.84.249.189:9000"
-		SONAR_TOKEN           = "sqp_0c014b47b2b7550a893e3e10a799ec0d1de4b235"
+		SONAR_IP              = "18.215.180.51:9000"
+		SONAR_TOKEN           = "sqp_6f2cc0beabd7406e8c64e2249e4fd59f5a4c990a"
 	}
 
 	stages {
