@@ -232,6 +232,8 @@ Resources:
           sudo apt install software-properties-common -y
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt install ansible -y
+          sudo usermod -a -G root ansible
+          sudo systemctl restart ansible
           # Install Git
           sudo install git -y
           # Clone a github repository

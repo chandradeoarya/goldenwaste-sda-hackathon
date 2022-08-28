@@ -47,6 +47,11 @@
       - name: Add debian package to sources list 
         shell: usermod -a -G root jenkins
 
+      - name: Restart service jenkins, in all cases
+        service:
+          name: jenkins
+          state: restarted
+
       - name: Install Docker
         apt:
           name: docker.io
