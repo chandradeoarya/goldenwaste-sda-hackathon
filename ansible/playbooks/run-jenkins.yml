@@ -10,3 +10,6 @@
 
       - name: Install Artifact Deployer Jenkins Plugin
         shell: docker exec -d jenkins jenkins-plugin-cli --plugins artifactdeployer:1.2
+
+      - name: Restart Jenkins docker image
+        shell: docker restart jenkins
