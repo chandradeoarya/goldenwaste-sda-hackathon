@@ -10,12 +10,10 @@
       copy: src="/var/lib/jenkins/jobs/goldenwaste-sda-hackathon/builds/*/archive/target/**.jar" dest="{{ jarRemotePath }}/{{ jarName }}"
       register: getresult
 
-    - debug:
-        msg="{{ getresult.msg }}"
-      when: getresult.changed
+    - debug: var=getresult.stdout_lines
       
     - name: Run JAR file
       shell: java -jar {{ jarRemotePath }}/{{ jarName }}
       
-    - name: wait for WebApp to start
+    - name: Wait for WebApp to start
       wait_for: port=8080 timeout=60
