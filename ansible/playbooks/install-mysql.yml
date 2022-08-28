@@ -3,10 +3,7 @@
     gather_facts: false
     become: yes
     vars:
-      new_mysql_root_password: DevOps@2022
-      mysqlsoftware:
-        - mysql-server
-        - mysql-client
+      mysql_root_password: DevOps@2022
 
     tasks:
       - name: Install python, pip, MySQL etc.
@@ -36,7 +33,7 @@
         mysql_user:
           name: root
           host: "{{ item }}"
-          password: "{{ new_mysql_root_password }}"
+          password: "{{ mysql_root_password }}"
         with_items:
           - "{{ ansible_host }}"
           - 127.0.0.1
@@ -53,3 +50,10 @@
         ansible.builtin.file:
           path: /root/.my.cnf
           state: absent
+
+      - name: Create a new database  
+        mysql_db: 
+          name: goldenwastedb
+          state: present
+          login_user: root
+          login_password: "{{ mysql_root_password }}"
