@@ -25,6 +25,7 @@ This is a simple Java spring boot application build during SDA hackathon. Projec
 - Samar Ibrahim
 - Saeed Alghamdi
 - Najwa Alshahrani
+- FAISAL ALOTIBI
 
 #### Team3-Kubernetes
 - 
