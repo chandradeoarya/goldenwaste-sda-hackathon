@@ -1,0 +1,5 @@
+---
+  - import_playbook: install-tools.yml
+  - import_playbook: install-java-maven.yml
+  - import_playbook: install-mysql.yml
+  - import_playbook: run-sonarqube.yml
