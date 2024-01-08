@@ -11,4 +11,4 @@ ENV GOLDEN_DB_PASSWORD=DevOps2022
 ENV GOLDEN_DB_PORT=3306
 WORKDIR /app
 COPY --from=build /app/target/goldenWastedd-0.0.1-SNAPSHOT.jar .
-ENTRYPOINT ["java","-jar","goldenWastedd-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","goldenwaste.jar"]
