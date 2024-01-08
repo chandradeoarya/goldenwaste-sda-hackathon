@@ -8,4 +8,4 @@ WORKDIR /app
 COPY . .
 RUN mvn package
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","target/goldenWastedd-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","target/goldenwaste.jar"]
