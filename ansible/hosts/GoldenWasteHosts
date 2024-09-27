@@ -1,0 +1,7 @@
+[GoldenWasteWebApp]
+Web ansible_user=ubuntu ansible_host=10.0.9.132
+[GoldenWasteDB]
+DB ansible_user=ubuntu ansible_host=10.0.128.111
+
+[all:vars]
+ansible_ssh_private_key_file=/home/ubuntu/GoldenWaste/.ssh/temp.pem
