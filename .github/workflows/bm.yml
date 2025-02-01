@@ -49,7 +49,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           # Navigate to deployment directory
-          cd /home/${{ secrets.EC2_USER }}/app
+          cd /home/${{ secrets.EC2_USER }}/
 
           # Remove previous WAR file
           rm -f app.war
