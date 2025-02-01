@@ -1,0 +1,63 @@
+name: Java Spring Boot CI/CD to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    # Step 1: Checkout the repository
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up JDK
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    # Step 3: Build the application using Maven
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    # Step 4: Upload WAR file to S3
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Upload WAR to S3
+      run: aws s3 cp target/*.war s3://${{ secrets.AWS_S3_BUCKET }}/
+
+    # Step 5: Deploy to AWS EC2 via SSH
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          # Stop Tomcat service if running
+          sudo systemctl stop tomcat || true
+          
+          # Remove existing WAR file
+          sudo rm -rf /var/lib/tomcat/webapps/myapp.war
+          
+          # Download new WAR file from S3
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war /var/lib/tomcat/webapps/goldenwaste.war
+          
+          # Restart Tomcat service
+          sudo systemctl start tomcat
+          
+          # Print status
+          sudo systemctl status tomcat --no-pager
