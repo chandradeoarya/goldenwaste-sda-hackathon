@@ -1,0 +1,56 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "cpclass-gha-javaspring" ]
+  pull_request:
+    branches: [ "cpclass-gha-javaspring" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1  # Set your AWS region
+
+    # Step 5: Upload WAR file to S3
+    - name: Upload WAR to S3
+      run: aws s3 cp target/goldenwaste.war s3://${{ secrets.AWS_S3_BUCKET }}/
+
+
+    # Step 6: Deploy to AWS EC2 via SSH
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          # Navigate to deployment directory
+          cd /home/${{ secrets.EC2_USER }}/
+
+          # Remove previous WAR file
+          rm -f goldenwaste.war
+
+          # Download new WAR file from S3
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war .
+
+          # Start the application with embedded Tomcat
+          java -jar goldenwaste.war
