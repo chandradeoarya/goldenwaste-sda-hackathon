@@ -47,14 +47,8 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # Stop Tomcat service if running
-          sudo systemctl stop tomcat || true
-          
           # Download new WAR file from S3
-          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war /var/lib/tomcat10/webapps/goldenwaste.war
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.jar .          
           
-          # Restart Tomcat service
-          sudo systemctl start tomcat
-          
-          # Print status
-          sudo systemctl status tomcat --no-pager
+          # start java jar
+          java -jar goldenwaste.jar
