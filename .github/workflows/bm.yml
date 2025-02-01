@@ -28,7 +28,11 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
-    # Step 4: Upload WAR file to S3
+    # Step 4: Zip the entire target folder
+    - name: Zip Target Directory
+      run: zip -r target.zip target/
+
+    # Step 5: Configure AWS Credentials
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -36,10 +40,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Upload WAR to S3
-      run: aws s3 cp target/goldenwaste.jar s3://${{ secrets.AWS_S3_BUCKET }}/
+    # Step 6: Upload ZIP file to S3
+    - name: Upload ZIP to S3
+      run: aws s3 cp target.zip s3://${{ secrets.AWS_S3_BUCKET }}/golden/target.zip
 
-    # Step 5: Deploy to AWS EC2 via SSH
+    # Step 7: Deploy to AWS EC2 via SSH
     - name: Deploy to AWS EC2
       uses: appleboy/ssh-action@v0.1.10
       with:
@@ -47,8 +52,18 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # Download new WAR file from S3
-          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.jar .          
-          
-          # start java jar
-          java -jar goldenwaste.jar
+          # Navigate to deployment directory
+          cd /home/${{ secrets.EC2_USER }}/app
+
+          # Remove previous target folder and zip file
+          rm -rf target
+          rm -f target.zip
+
+          # Download new ZIP file from S3
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/golden/target.zip target.zip
+
+          # Unzip the target directory
+          unzip target.zip
+
+          # Start the Java application
+          java -jar target/goldenwaste.jar
