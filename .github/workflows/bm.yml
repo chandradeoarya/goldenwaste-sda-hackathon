@@ -51,9 +51,4 @@ jobs:
           aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.jar .          
           
           # start java jar
-          nohup env GOLDEN_DB_URL=${{ secrets.GOLDEN_DB_URL }} \
-                     GOLDEN_DB_NAME=${{ secrets.GOLDEN_DB_NAME }} \
-                     GOLDEN_DB_USERNAME=${{ secrets.GOLDEN_DB_USERNAME }} \
-                     GOLDEN_DB_PASSWORD=${{ secrets.GOLDEN_DB_PASSWORD }} \
-                     GOLDEN_DB_PORT=${{ secrets.GOLDEN_DB_PORT }} \
-                     java -jar goldenwaste.jar > app.log 2>&1 &
+          java -jar goldenwaste.jar
