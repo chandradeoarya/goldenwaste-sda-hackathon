@@ -37,7 +37,7 @@ jobs:
         aws-region: us-east-1
 
     - name: Upload WAR to S3
-      run: aws s3 cp target/*.war s3://${{ secrets.AWS_S3_BUCKET }}/
+      run: aws s3 cp target/goldenwaste.war s3://${{ secrets.AWS_S3_BUCKET }}/
 
     # Step 5: Deploy to AWS EC2 via SSH
     - name: Deploy to AWS EC2
