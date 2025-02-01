@@ -57,11 +57,8 @@ jobs:
           # Download new WAR file from S3
           aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war .
 
-          # Stop existing application if running
-          pkill -f 'java -jar goldenwaste.war' || true
-
           # Start the application with embedded Tomcat
-          nohup java -jar goldenwaste.war > app.log 2>&1 &
+          java -jar goldenwaste.war
 
 # name: Java Spring Boot CI/CD to AWS EC2
 
