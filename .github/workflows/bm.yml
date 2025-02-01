@@ -3,7 +3,7 @@ name: Java Spring Boot CI/CD to AWS EC2
 on:
   push:
     branches:
-      - main
+      - ga-cicd-bm
 
 jobs:
   build:
