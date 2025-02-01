@@ -55,7 +55,7 @@ jobs:
           rm -f goldenwaste.war
 
           # Download new WAR file from S3
-          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war
+          aws s3 cp s3://${{ secrets.AWS_S3_BUCKET }}/goldenwaste.war .
 
           # Stop existing application if running
           pkill -f 'java -jar goldenwaste.war' || true
