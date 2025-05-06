@@ -1,0 +1,341 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  A custom Virtual Private Cloud (VPC) with public and private subnet
+  partitions. A private MySQL Database within the private subnet, and two EC2
+  Instance (Ubuntu) in the public subnet.
+
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: temp
+
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: String
+    Default: t2.large
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t3.nano
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3.large
+    ConstraintDescription: must be a valid EC2 instance type.
+
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  HTTPLocation:
+    Description: The IP address range that can be used to HTTP to the EC2 instances
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  DBLocation:
+    Description: The IP address range that can be used in DB EC2 instances
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  LatestUbuntuAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: >-
+      /aws/service/canonical/ubuntu/server/20.04/stable/current/amd64/hvm/ebs-gp2/ami-id
+
+
+Resources:
+
+  GoldenWasteVPC:
+    Type: 'AWS::EC2::VPC'
+    Description: Golden Waste VPC definition
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: GoldenWasteVPC
+
+  GoldenWasteSubnetPublic:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.0.0/20
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref GoldenWasteVPC
+      Tags:
+        - Key: Name
+          Value: GoldenWasteSubnetPublic
+
+  GoldenWasteSubnetPrivate:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.128.0/20
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref GoldenWasteVPC
+      Tags:
+        - Key: Name
+          Value: GoldenWasteSubnetPrivate
+
+  GoldenWastePublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref GoldenWasteVPC
+      Tags:
+        - Key: Name
+          Value: GoldenWasteRouteTable | Public
+
+  GoldenWasteInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: GoldenWasteInternetGateway
+
+  GoldenWasteGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref GoldenWasteVPC
+      InternetGatewayId: !Ref GoldenWasteInternetGateway
+
+  GoldenWastePublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn:
+      - GoldenWasteGatewayAttachment
+    Properties:
+      RouteTableId: !Ref GoldenWastePublicRouteTable
+      GatewayId: !Ref GoldenWasteInternetGateway
+      DestinationCidrBlock: 0.0.0.0/0
+
+  GoldenWasteRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref GoldenWastePublicRouteTable
+      SubnetId: !Ref GoldenWasteSubnetPublic
+
+  WebAppSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: WebAppSecurityGroup
+      GroupDescription: 'Allow ports 80 for HTTP,8080 for java app and 22 for SSH'
+      VpcId: !Ref GoldenWasteVPC
+      SecurityGroupIngress:
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: HTTP
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          Description: Java
+        - CidrIp: !Ref SSHLocation
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: SSH
+
+  MasterSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: MasterSecurityGroup
+      GroupDescription: >-
+        Allow ports 80 for HTTP, 22 for SSH, 8080 for Jenkins and 9000 for SonarQube
+      VpcId: !Ref GoldenWasteVPC
+      SecurityGroupIngress:
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          Description: Jenkins
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          Description: SonarQube
+        - CidrIp: !Ref HTTPLocation
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: HTTP
+        - CidrIp: !Ref SSHLocation
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: SSH
+
+  MySQLSecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt MySQLSecurityGroup.GroupId
+      SourceSecurityGroupId: !GetAtt WebAppSecurityGroup.GroupId
+      Description: MySQL Security Group Ingress Rule
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 0
+
+  MySQLSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: MySQLSecurityGroup
+      GroupDescription: Allow ports 22 for SSH and 3306 for MySQL
+      VpcId: !Ref GoldenWasteVPC
+      SecurityGroupIngress:
+        - CidrIp: !Ref DBLocation
+          IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          Description: MySQL
+        - CidrIp: !Ref SSHLocation
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: SSH
+
+  MasterInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref LatestUbuntuAmiId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt 
+          - MasterSecurityGroup
+          - GroupId
+      SubnetId: !Ref GoldenWasteSubnetPublic
+      Tags:
+        - Key: Name
+          Value: Master
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # install Ansible
+          sudo apt update -y
+          sudo apt install software-properties-common -y
+          sudo add-apt-repository --yes --update ppa:ansible/ansible
+          sudo apt install ansible -y
+          sudo usermod -a -G root ansible
+          sudo systemctl restart ansible
+          # Install Git
+          sudo install git -y
+          # Clone a github repository
+          sudo git clone https://github.com/MohanadSinan/goldenwaste-sda-hackathon.git /home/ubuntu/GoldenWaste
+          # Setting instance hostname
+          sudo hostname Master
+          sudo echo Master > /etc/hostname
+
+  WebAppInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref LatestUbuntuAmiId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt 
+          - WebAppSecurityGroup
+          - GroupId
+      SubnetId: !Ref GoldenWasteSubnetPublic
+      Tags:
+        - Key: Name
+          Value: GoldenWasteWebApp
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Setting instance hostname
+          sudo hostname GoldenWasteWebApp
+          sudo echo GoldenWasteWebApp > /etc/hostname
+
+  MySQLInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref LatestUbuntuAmiId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !GetAtt 
+          - MySQLSecurityGroup
+          - GroupId
+      SubnetId: !Ref GoldenWasteSubnetPrivate
+      Tags:
+        - Key: Name
+          Value: GoldenWasteDB
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Setting instance hostname
+          sudo hostname GoldenWasteDB
+          sudo echo GoldenWasteDB > /etc/hostname
+
+Outputs:
+  MasterInstanceURL:
+    Value: !Sub 
+      - 'http://${PublicAddress}'
+      - PublicAddress: !GetAtt MasterInstance.PublicDnsName
+    Description: Master Instance URL
+  MasterInstanceIP:
+    Value: !GetAtt 
+      - MasterInstance
+      - PublicIp
+    Description: Master Instance Public IP
+
+  JenkinsURL:
+    Value: !Sub 
+      - 'http://${PublicAddress}:8080'
+      - PublicAddress: !GetAtt MasterInstance.PublicDnsName
+    Description: Jenkins URL
+  JenkinsIP:
+    Value: !Sub 
+      - 'http://${PublicIp}:8080'
+      - PublicIp: !GetAtt MasterInstance.PublicIp
+    Description: Jenkins Public IP
+
+  SonarQubeURL:
+    Value: !Sub 
+      - 'http://${PublicAddress}:9000'
+      - PublicAddress: !GetAtt MasterInstance.PublicDnsName
+    Description: SonarQube URL
+  SonarQubeIP:
+    Value: !Sub 
+      - 'http://${PublicIp}:9000'
+      - PublicIp: !GetAtt MasterInstance.PublicIp
+    Description: SonarQube Public IP
+
+  WebAppInstanceURL:
+    Value: !Sub 
+      - 'http://${PublicAddress}'
+      - PublicAddress: !GetAtt WebAppInstance.PublicDnsName
+    Description: Web Application URL
+  WebAppInstanceIP:
+    Value: !GetAtt 
+      - WebAppInstance
+      - PublicIp
+    Description: Web Application Public IP
+
+  MySQLInstanceURL:
+    Value: !Sub 
+      - 'http://${PublicAddress}'
+      - PublicAddress: !GetAtt MySQLInstance.PublicDnsName
+    Description: MySQL Database URL
+  MySQLInstanceIP:
+    Value: !GetAtt 
+      - MySQLInstance
+      - PublicIp
+    Description: MySQL Database Public IP
